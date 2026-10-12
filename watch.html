@@ -25,6 +25,20 @@
         ::-webkit-scrollbar-track { background: #0b0f19; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
         /* iOS & Mobile Fullscreen Fallback */
+        #playerContainer {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            border-radius: 1rem;
+            overflow: hidden;
+            isolation: isolate;
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            transform: translateZ(0);
+        }
+        #lockedOverlay {
+            border-radius: inherit;
+        }
         #playerContainer.fullscreen-mode {
             position: fixed !important;
             top: 0 !important;
