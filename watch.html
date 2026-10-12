@@ -97,8 +97,8 @@
                     <div class="w-10 h-10 border-4 border-brand border-t-transparent rounded-full animate-spin"></div>
                 </div>
 
-                <!-- Actual Video Element (iframe ឬ video tag) -->
-                <iframe id="videoPlayer" src="" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen webkit-playsinline playsinline></iframe>
+                <!-- Actual Video Element (iframe with correct iOS Safari & Android attributes) -->
+                <iframe id="videoPlayer" src="" class="w-full h-full border-0" controls playsinline webkit-playsinline x-webkit-airplay="allow" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
 
                 <!-- Floating Fullscreen Button -->
                 <button id="fullscreenBtn" onclick="toggleFullScreen()" class="absolute bottom-3 right-3 z-30 bg-black/70 hover:bg-brand text-white px-3 py-2 rounded-lg backdrop-blur-md border border-white/20 shadow-xl transition flex items-center gap-1.5 text-xs font-bold" title="ពង្រីកពេញអេក្រង់ (Full Screen)">
