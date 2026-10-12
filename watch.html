@@ -92,6 +92,11 @@
                     <button id="btnUnlock" class="bg-brand px-6 py-2.5 rounded-lg font-bold text-sm shadow-lg transition">ដោះសោរឥឡូវនេះ</button>
                 </div>
 
+                <!-- Loading Spinner Overlay -->
+                <div id="videoLoader" class="absolute inset-0 bg-black/80 flex items-center justify-center z-15 hide backdrop-blur-sm">
+                    <div class="w-10 h-10 border-4 border-brand border-t-transparent rounded-full animate-spin"></div>
+                </div>
+
                 <!-- Actual Video Element (iframe ឬ video tag) -->
                 <iframe id="videoPlayer" src="" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen webkit-playsinline playsinline></iframe>
 
@@ -274,15 +279,17 @@
             const lockedOverlay = document.getElementById('lockedOverlay');
             const epBadge = document.getElementById('epBadge');
             const videoPlayer = document.getElementById('videoPlayer');
+            const videoLoader = document.getElementById('videoLoader');
 
             if (!isFree) {
-                // ឧទាហរណ៍ករណីជាប់សោរ (អាចភ្ជាប់ជាមួយប្រព័ន្ធពិនិត្យមើលថា User បានទិញហើយឬនៅ)
                 lockedOverlay.classList.remove('hide');
+                if (videoLoader) videoLoader.classList.add('hide');
                 epBadge.innerText = "Premium Episode";
                 epBadge.className = "bg-yellow-900/50 text-yellow-400 border border-yellow-700/50 text-xs px-3 py-1 rounded-full font-bold";
-                videoPlayer.src = ""; // បិទវីដេអូសិន
+                videoPlayer.src = ""; 
             } else {
                 lockedOverlay.classList.add('hide');
+                if (videoLoader) videoLoader.classList.remove('hide');
                 epBadge.innerText = "Free Episode";
                 epBadge.className = "bg-purple-900/50 text-brand border border-purple-700/50 text-xs px-3 py-1 rounded-full font-bold";
                 
@@ -299,6 +306,10 @@
                 } else if(url.includes('youtu.be/')) {
                     url = url.replace('youtu.be/', 'youtube.com/embed/');
                 }
+
+                videoPlayer.onload = () => {
+                    if (videoLoader) videoLoader.classList.add('hide');
+                };
                 videoPlayer.src = url;
             }
         }
