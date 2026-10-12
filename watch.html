@@ -41,10 +41,10 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col pb-20 md:pb-0">
 
     <!-- Header / Navbar -->
-    <header class="bg-card border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <header class="bg-card border-b border-gray-800 px-6 py-4 sticky top-0 z-50 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-3">
             <a href="index.html" class="text-gray-400 hover:text-white transition flex items-center gap-1 text-sm">
                 ❮ ត្រឡប់ក្រោយ
@@ -395,7 +395,16 @@
             });
         }
     </script>
-</body>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-card border-t border-gray-800 flex justify-around py-3 z-50 shadow-2xl">
+        <a href="index.html" class="flex flex-col items-center text-gray-400 hover:text-brand transition"><span class="text-xl">🏠</span><span class="text-[10px]" data-key="navHome">Home</span></a>
+        <a href="index.html#moviesSection" class="flex flex-col items-center text-gray-400 hover:text-brand transition"><span class="text-xl">🎬</span><span class="text-[10px]" data-key="navAll">ទាំងអស់</span></a>
+        <a href="index.html#moviesSection" class="flex flex-col items-center text-gray-400 hover:text-brand transition"><span class="text-xl">🟢</span><span class="text-[10px]" data-key="navFree">ឥតគិតថ្លៃ</span></a>
+        <a href="index.html" onclick="setTimeout(openFavoritesModal, 300)" class="flex flex-col items-center text-gray-400 hover:text-brand transition"><span class="text-xl">❤️</span><span class="text-[10px]" data-key="navFav">សំណព្វចិត្ត</span></a>
+        <a href="index.html" onclick="setTimeout(openTopupModal, 300)" class="flex flex-col items-center text-gray-400 hover:text-brand transition"><span class="text-xl">💳</span><span class="text-[10px]" data-key="navTopup">Top Up</span></a>
+    </nav>
+
     <!-- Anti-Screenshot & Anti-ScreenRecord Privacy Warning Modal -->
     <div id="privacyWarningModal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[999] hide p-4">
         <div class="bg-gradient-to-tr from-red-950 to-gray-900 border-2 border-red-500 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl space-y-4 animate-bounce">
@@ -410,6 +419,7 @@
             </button>
         </div>
     </div>
+</body>
 
     <style>
         /* Anti-Copy and Anti-Selection CSS */
