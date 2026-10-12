@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEO DRAMA - Short Dramas</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <meta name="theme-color" content="#a855f7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CEO DRAMA">
+    <link rel="apple-touch-icon" href="logo.svg">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Battambang', sans-serif; background-color: #0f111a; color: white; }
+        .bg-card { background-color: #1a1d2d; }
+        .text-brand { color: #a855f7; }
+        .bg-brand { background-color: #a855f7; }
+        .bg-brand:hover { background-color: #9333ea; }
+        .hide { display: none !important; } 
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen pb-20 md:pb-0">
+
+    <!-- Header / Navbar -->
+    <header class="bg-card border-b border-gray-800 p-4 sticky top-0 z-50 flex justify-between items-center">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
+            <img src="logo.svg" class="w-8 h-8 rounded-lg object-contain" alt="CEO DRAMA Logo">
+            <h1 class="text-xl font-bold">CEO DRAMA</h1>
+        </div>
+        
+        <div class="hidden md:flex gap-5 items-center">
+            <a href="#" onclick="goHome()" class="hover:text-brand text-sm" data-key="home">ទំព័រដើម</a>
+            <a href="#moviesSection" onclick="filterMenu('All')" class="hover:text-brand text-sm" data-key="allMovies">រឿងទាំងអស់</a>
+            <a href="#moviesSection" onclick="filterMenu('Free')" class="hover:text-brand text-sm" data-key="freeMovies">រឿងឥតគិតថ្លៃ</a>
+            <a href="#" onclick="openFavoritesModal()" class="hover:text-brand text-sm flex items-center gap-1 text-red-400" data-key="favorites">❤️ រឿងសំណព្វចិត្ត</a>
+            <a href="#" onclick="openPurchasesModal()" class="hover:text-brand text-sm flex items-center gap-1 text-yellow-400" data-key="purchased">🛍️ រឿងបានទិញ</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button onclick="toggleLanguage()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-2.5 py-1.5 rounded-lg font-bold border border-gray-700 flex items-center gap-1 transition">
+                🌐 <span id="currentLangLabel">ខ្មែរ | ENG</span>
+            </button>
+            <div id="userBalance" class="text-sm bg-gray-800 px-3 py-1 rounded-full text-yellow-400 font-bold">💰 0 pts</div>
+            <button onclick="openTopupModal()" class="text-sm hidden md:block hover:text-brand bg-purple-600 px-3 py-1.5 rounded-lg font-bold" data-key="topup">បញ្ចូលកាក់ (Top Up)</button>
+            
+            <div id="userInfo" class="hidden items-center gap-2 bg-gray-800 px-3 py-1 rounded-full">
+                <img id="userAvatar" src="https://placehold.co/40x40" class="w-6 h-6 rounded-full" alt="Avatar">
+                <span id="userName" class="text-sm font-semibold">User</span>
+                <button id="btnLogout" class="text-xs bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-white ml-2" data-key="logout">ចាកចេញ</button>
+            </div>
+
+            <button id="mainLoginBtn" class="bg-brand text-white px-4 py-2 rounded text-sm font-bold" data-key="login">ចូលគណនី</button>
+        </div>
+    </header>
+
+    <!-- USER VIEW (HOME) -->
+    <main id="homeView" class="p-4 max-w-7xl mx-auto space-y-8">
+        
+        <!-- 24H VIP GIFT BANNER (Active VIP Status & Glowing Countdown) -->
+        <div id="vipCountdownBanner" class="hidden bg-gradient-to-r from-yellow-950 via-purple-950 to-yellow-950 border-2 border-yellow-400 p-4 rounded-2xl shadow-[0_0_20px_rgba(234,179,8,0.6)] animate-pulse flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-yellow-400/20 border border-yellow-400 rounded-full flex items-center justify-center text-2xl text-yellow-300">👑</div>
+                <div>
+                    <h4 class="text-base font-extrabold text-yellow-300 flex items-center gap-2">
+                        <span>✨ VIP Free 24ម៉ោង កំពុងដំណើរការ</span>
+                    </h4>
+                    <p class="text-xs text-gray-300">អ្នកអាចទស្សនារឿងទាំងអស់ដោយសេរី និងគ្មានកម្រិត!</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-black/50 px-4 py-2 rounded-xl border border-yellow-400/50 shadow-inner">
+                <span class="text-xs text-yellow-300 font-bold">⏱️ សល់ពេល៖</span>
+                <span id="vipCountdownTimer" class="text-sm md:text-base font-extrabold text-yellow-400 tracking-wider">00:00:00</span>
+            </div>
+        </div>
+
+        <!-- HORIZONTAL SCROLLABLE BANNER CARDS CONTAINER -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg md:text-xl font-bold flex items-center gap-2 text-yellow-400">
+                    <span>🔥</span> <span id="bannerMainTitleText">រឿងល្បីប្រចាំសប្តាហ៍</span>
+                </h3>
+                <span class="text-xs text-gray-400" id="bannerMainDescText">រំកិលមើលបន្ថែម 👉</span>
+            </div>
+
+            <div id="homeBannerContainer" class="flex gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 scroll-smooth">
+                <div class="bg-card border border-gray-800 p-6 rounded-xl text-center text-gray-500 min-w-full">
+                    កំពុងផ្ទុក Banner...
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH BAR SECTION -->
+        <div class="bg-card border border-gray-800 p-4 rounded-xl shadow-lg flex items-center gap-3">
+            <span class="text-xl">🔍</span>
+            <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="ស្វែងរកចំណងជើងរឿងភាគ..." data-key="searchPlaceholder" class="w-full bg-transparent text-sm text-white focus:outline-none placeholder-gray-500">
+        </div>
+
+        <!-- លំដាប់ទី1: រឿងពេញនិយមឥឡូវនេះ (Popular Movies - Most Viewed & Top Rated) -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg md:text-xl font-bold flex items-center gap-2 text-yellow-400">
+                    <span>🔥</span> <span data-key="popularMovies">រឿងពេញនិយមឥឡូវនេះ (Popular Movies)</span>
+                </h3>
+            </div>
+            <div id="popularMoviesGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="bg-card border border-gray-800 p-6 rounded-lg text-center text-gray-500 col-span-full">កំពុងផ្ទុក...</div>
+            </div>
+        </div>
+
+        <!-- លំដាប់ទី2: រឿងថ្មីថ្ងៃនេះ (New Movies Today) -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg md:text-xl font-bold flex items-center gap-2 text-brand">
+                    <span>✨</span> <span data-key="newReleases">រឿងថ្មីថ្ងៃនេះ (New Movies Today)</span>
+                </h3>
+            </div>
+            <div id="newMoviesGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="bg-card border border-gray-800 p-6 rounded-lg text-center text-gray-500 col-span-full">កំពុងផ្ទុក...</div>
+            </div>
+        </div>
+
+        <!-- លំដាប់ទី3: ស្វែងរកភាពយន្តតាមប្រភេទ (Browse by Category) -->
+        <div id="categoriesSection" class="space-y-4">
+            <h3 class="text-xl font-bold flex items-center gap-2"><span>▦</span> <span data-key="categoriesTitle">ស្វែងរកភាពយន្តតាមប្រភេទ (Categories)</span></h3>
+            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <button onclick="filterCategory('All')" class="cat-btn bg-brand text-white px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition">ទាំងអស់ (All)</button>
+                <button onclick="filterCategory('CEO Drama')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">CEO Drama</button>
+                <button onclick="filterCategory('Paid')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">រឿងបង់ប្រាក់</button>
+                <button onclick="filterCategory('Free')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">រឿងឥតគិតថ្លៃ</button>
+                <button onclick="filterCategory('Recap')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">សម្រាយរឿង</button>
+                <button onclick="filterCategory('Adventure')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">ផ្សងព្រេង</button>
+                <button onclick="filterCategory('Comedy')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">កំប្លែង</button>
+                <button onclick="filterCategory('Fantasy')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">ស្រមើស្រមៃ / វេទមន្ត</button>
+                <button onclick="filterCategory('Martial Arts')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">ក្បាច់គុន</button>
+                <button onclick="filterCategory('Mystery')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">អាថ៌កំបាំង</button>
+                <button onclick="filterCategory('Romance')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">មនោសញ្ចេតនា / ស្នេហា</button>
+                <button onclick="filterCategory('Sci-Fi')" class="cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition">វិទ្យាសាស្ត្រ</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Movie List -->
+        <div id="moviesSection">
+            <h3 class="text-xl font-bold mb-4" id="sectionMovieTitle">រឿងទាំងអស់</h3>
+            <div id="publicMoviesGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="bg-card border border-gray-800 p-8 rounded-lg text-center text-gray-500 col-span-full">
+                    កំពុងទាញយកទិន្នន័យរឿងភាគ...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MOVIE PLAYER & EPISODES VIEW (HIDDEN INITIALLY) -->
+    <main id="playerView" class="p-4 max-w-5xl mx-auto space-y-6 hide">
+        <div class="flex justify-between items-center">
+            <button onclick="goHome()" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                ⬅ ត្រឡប់ក្រោយ (Back to Home)
+            </button>
+        </div>
+
+        <div class="bg-card border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden" id="videoContainerWrapper">
+                <div class="absolute top-0 right-0 w-16 h-16 z-30 cursor-default" title="Locked"></div>
+
+                <video id="mainVideoPlayer" controls class="w-full h-full object-contain hide">
+                    ប្រព័ន្ធរុករករបស់អ្នកមិនគាំទ្រ Video Player ទេ។
+                </video>
+                <iframe id="mainIframePlayer" class="w-full h-full border-0 pointer-events-auto hide" allowfullscreen></iframe>
+
+                <div id="videoLockOverlay" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center hide space-y-4 z-20">
+                    <div class="w-16 h-16 rounded-full bg-purple-900/50 border border-purple-500 flex items-center justify-center text-3xl">🔒</div>
+                    <h3 id="lockTitle" class="text-lg font-bold text-yellow-400">វីដេអូនេះទាមទារការបង់ប្រាក់</h3>
+                    <p id="lockDesc" class="text-xs text-gray-300 max-w-sm">សូមចំណាយពិន្ទុ (Coins) ដើម្បីដោះសោរទស្សនារឿងនេះ។</p>
+                    <button id="btnUnlockVideo" onclick="unlockContent()" class="bg-brand hover:bg-purple-600 text-white font-bold px-6 py-2.5 rounded-lg text-xs shadow-lg transition">
+                        🔓 ដោះសោរ (Unlock Now)
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-gray-800 pb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3">
+                            <span id="playerMovieCategory" class="text-xs bg-purple-900/50 text-purple-300 px-2.5 py-1 rounded-full border border-purple-700">Category</span>
+                            <span id="playerMovieSeasonBadge" class="text-xs bg-blue-900/50 text-blue-300 px-2.5 py-1 rounded-full border border-blue-700 hide">Season</span>
+                            <button id="btnFavorite" onclick="toggleFavorite()" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition">
+                                <span id="favHeartIcon" class="text-base text-gray-400">🤍</span> <span id="favText">ចូលចិត្ត</span>
+                            </button>
+                            <button onclick="openRatingModal()" class="bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition shadow">
+                                <span>⭐</span> <span id="playerMovieRatingText">5.0 (ផ្កាយ)</span>
+                            </button>
+                        </div>
+                        <h2 id="playerMovieTitle" class="text-xl md:text-2xl font-bold mt-2">ចំណងជើងរឿង</h2>
+                    </div>
+                    <div id="playerMoviePriceBadge" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-bold px-3 py-1 rounded-lg text-sm">
+                        💰 Free
+                    </div>
+                </div>
+                <p id="playerMovieDesc" class="text-xs md:text-sm text-gray-300 leading-relaxed">សេចក្តីសង្ខេប...</p>
+
+                <div id="seasonLinkContainer" class="hide pt-2">
+                    <p class="text-xs font-bold text-blue-400 mb-2" id="seasonLabelTitle">🔗 រដូវកាលរឿង (Season):</p>
+                    <div onclick="playSeasonLink()" class="inline-flex items-center gap-3 bg-gray-900 border border-gray-700 hover:border-brand p-2 rounded-xl cursor-pointer transition group shadow">
+                        <img id="seasonThumbnail" src="https://placehold.co/80x60" class="w-20 h-14 object-cover rounded-lg group-hover:scale-105 transition">
+                        <div>
+                            <p class="text-xs font-bold text-white group-hover:text-brand transition" id="seasonLinkTextName">▶ ចុចទស្សនារដូវកាលនេះក្នុង App</p>
+                            <span class="text-[10px] text-gray-400">បើកលេងក្នុង Web Player ផ្ទាល់</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="episodesSectionContainer" class="bg-card border border-gray-800 rounded-xl p-6 space-y-6">
+            <h3 class="font-bold text-base flex items-center gap-2">🎬 ជ្រើសរើសភាគ (Episodes)</h3>
+            <div id="episodesGrid" class="grid grid-cols-4 md:grid-cols-8 gap-2"></div>
+        </div>
+    </main>
+
+    <!-- Favorites Modal -->
+    <div id="favoritesModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] hide p-4">
+        <div class="bg-card border border-gray-700 rounded-xl max-w-2xl w-full p-6 relative shadow-2xl space-y-4">
+            <button onclick="document.getElementById('favoritesModal').classList.add('hide')" class="absolute top-4 right-4 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700">✕</button>
+            <h2 class="text-xl font-bold flex items-center gap-2 text-red-400">❤️ រឿងភាគដែលបានដាក់ចូលសំណព្វចិត្ត</h2>
+            <div id="favoritesModalGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[60vh] overflow-y-auto p-1">
+                <p class="text-gray-500 text-xs text-center col-span-full py-8">កំពុងផ្ទុក...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Purchases Modal -->
+    <div id="purchasesModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] hide p-4">
+        <div class="bg-card border border-gray-700 rounded-xl max-w-2xl w-full p-6 relative shadow-2xl space-y-4">
+            <button onclick="document.getElementById('purchasesModal').classList.add('hide')" class="absolute top-4 right-4 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700">✕</button>
+            <h2 class="text-xl font-bold flex items-center gap-2 text-yellow-400">🛍 ឃ្លាំងរឿងភាគដែលបានទិញ / ដោះសោររួច</h2>
+            <div id="purchasesModalGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[60vh] overflow-y-auto p-1">
+                <p class="text-gray-500 text-xs text-center col-span-full py-8">កំពុងផ្ទុក...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] hide p-4">
+        <div class="bg-card border border-gray-700 rounded-xl max-w-sm w-full p-6 relative text-center shadow-2xl space-y-4">
+            <button onclick="document.getElementById('ratingModal').classList.add('hide')" class="absolute top-4 right-4 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700">✕</button>
+            <h3 class="text-lg font-bold text-yellow-400">⭐ ឱ្យពិន្ទុរឿងនេះ (Rate Movie)</h3>
+            <p class="text-xs text-gray-300">ជ្រើសរើសចំនួនផ្កាយពី ១ ដល់ ៥</p>
+            <div class="flex justify-center gap-2 py-2">
+                <button onclick="submitMovieRating(1)" class="text-3xl hover:scale-125 transition">⭐</button>
+                <button onclick="submitMovieRating(2)" class="text-3xl hover:scale-125 transition">⭐</button>
+                <button onclick="submitMovieRating(3)" class="text-3xl hover:scale-125 transition">⭐</button>
+                <button onclick="submitMovieRating(4)" class="text-3xl hover:scale-125 transition">⭐</button>
+                <button onclick="submitMovieRating(5)" class="text-3xl hover:scale-125 transition">⭐</button>
+            </div>
+            <p id="userCurrentRatingStatus" class="text-xs text-gray-400">អ្នកមិនទាន់បានឱ្យពិន្ទុ</p>
+        </div>
+    </div>
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+        <div class="bg-card border border-gray-700 rounded-xl max-w-sm w-full p-6 relative text-center shadow-2xl space-y-4">
+            <button onclick="document.getElementById('loginModal').classList.add('hide')" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+            <h2 id="loginModalTitle" class="text-2xl font-bold mb-1">ចូលគណនី CEO DRAMA</h2>
+            <p id="loginModalDesc" class="text-gray-400 text-sm mb-4">សូមចូលគណនីជាមុនសិន ដើម្បីទស្សនារឿងភាគ និងទទួលបានកាដូរ VIP ២៤ម៉ោង។</p>
+            
+            <!-- Google Login -->
+            <button id="btnGoogleLogin" class="w-full bg-white text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition shadow">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google"> ចូលប្រើជាមួយ Google
+            </button>
+
+            <div class="flex items-center my-3">
+                <div class="flex-grow border-t border-gray-700"></div>
+                <span class="px-3 text-xs text-gray-400 uppercase">ឬតាម Email</span>
+                <div class="flex-grow border-t border-gray-700"></div>
+            </div>
+
+            <!-- Email & Password Form -->
+            <form id="emailAuthForm" onsubmit="handleEmailAuth(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">អ៊ីមែល (Email)</label>
+                    <input type="email" id="authEmail" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-brand focus:outline-none" placeholder="example@email.com">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">លេខសម្ងាត់ (App Password)</label>
+                    <input type="password" id="authPassword" required minlength="6" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-brand focus:outline-none" placeholder="យ៉ាងតិច ៦ តួអក្សร">
+                </div>
+                <button type="submit" id="authSubmitBtn" class="w-full bg-brand hover:bg-purple-600 text-white font-bold py-3 rounded-lg text-sm transition shadow-lg">
+                    ចូលគណនី (Sign In)
+                </button>
+            </form>
+
+            <div class="text-xs text-gray-400 mt-3">
+                <span id="authToggleText">មិនទាន់មានគណនី?</span>
+                <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="text-brand font-bold hover:underline ml-1">បង្កើតថ្មី (Sign Up)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIP Gift Surprise Modal -->
+    <div id="vipGiftModal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-[110] hide p-4">
+        <div class="bg-gradient-to-tr from-purple-900 to-pink-900 border-2 border-yellow-400 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4">
+            <div class="w-20 h-20 bg-yellow-400/20 border-2 border-yellow-400 rounded-full flex items-center justify-center text-4xl mx-auto shadow-lg text-yellow-300">🎁</div>
+            <h2 class="text-2xl font-extrabold text-yellow-300">សូមអបអរសាទរ!</h2>
+            <p class="text-sm text-gray-200">អ្នកទទួលបានកាដូរពិសេស <b>មើលរឿងទាំងអស់ឥតគិតថ្លៃរយៈពេល ២៤ ម៉ោង (VIP Free)</b> សម្រាប់ការចុះឈ្មោះដំបូង!</p>
+            <button onclick="document.getElementById('vipGiftModal').classList.add('hide')" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-extrabold py-3 rounded-xl text-sm transition shadow-lg">
+                🚀 ចាប់ផ្តើមទស្សនាឥឡូវនេះ
+            </button>
+        </div>
+    </div>
+
+    <!-- KHQR Top Up Modal -->
+    <div id="topupModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] hide p-4">
+        <div class="bg-card border border-gray-700 rounded-xl max-w-4xl w-full p-6 relative shadow-2xl">
+            <button onclick="document.getElementById('topupModal').classList.add('hide')" class="absolute top-4 right-4 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700">✕</button>
+            <h2 class="text-2xl font-bold mb-1 text-center">បញ្ចូលទឹកប្រាក់ (Top Up Wallet)</h2>
+            <p class="text-gray-400 text-sm text-center mb-6">ទូទាត់រហ័សនិងមានសុវត្ថិភាពតាមរយៈ: KHQR</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h3 class="font-bold mb-2">ជ្រើសរើសកញ្ចប់</h3>
+                    <div id="indexPackagesGrid" class="grid grid-cols-2 gap-2"></div>
+                    
+                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-700 space-y-3">
+                        <h3 class="font-bold text-sm text-brand flex items-center gap-1">📱 Upload បង្កាន់ដៃផ្ទេរប្រាក់</h3>
+                        <p class="text-xs text-gray-400">ជ្រើសរើសរូបភាពបង្កាន់ដៃដើម្បីផ្ញើជូន Admin អនុម័ត៖</p>
+                        
+                        <input type="file" id="receiptFile" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-brand file:text-white hover:file:bg-purple-700 cursor-pointer">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <button onclick="submitReceiptAdmin()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-3 rounded text-xs transition flex items-center justify-center gap-1 shadow-lg">
+                                🟩 បញ្ជូនបង្កាន់ដៃទៅ Admin អនុម័តកាក់
+                            </button>
+                            <button onclick="submitReceiptTelegram()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-3 rounded text-xs transition flex items-center justify-center gap-1 shadow-lg">
+                                ✈️ បញ្ជូនបង្កាន់ដៃទៅ Telegram
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white text-black p-4 rounded-xl flex flex-col items-center justify-center shadow-lg">
+                    <h3 class="font-bold text-brand mb-2 text-center">KHQR ស្កេនបង់ប្រាក់</h3>
+                    <img id="khqrDisplayImage" src="https://placehold.co/200x200/ffffff/000000?text=KHQR+Code" alt="KHQR" class="w-48 h-48 mb-2 object-contain">
+                    <p class="text-xs text-gray-500 font-bold">ឈ្មោះគណនី: CEO DRAMA ENT</p>
+                    <p id="selectedPackageText" class="font-bold text-brand text-lg mt-1">$2.50 (50 pts)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER SOCIAL LINKS SECTION -->
+    <footer class="bg-card border-t border-gray-800 py-6 px-4 mt-12 mb-16 md:mb-0">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <img src="logo.svg" class="w-6 h-6 rounded object-contain" alt="CEO DRAMA Logo">
+                <span class="text-sm font-bold text-gray-300">© 2026 CEO DRAMA - All Rights Reserved.</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a id="footerTelegramLink" href="https://t.me/your_telegram_channel" target="_blank" class="flex items-center gap-1.5 bg-gray-900 border border-gray-700 hover:border-sky-500 text-sky-400 px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                    <span>✈️</span> Telegram
+                </a>
+                <a id="footerFacebookLink" href="https://facebook.com/your_facebook_page" target="_blank" class="flex items-center gap-1.5 bg-gray-900 border border-gray-700 hover:border-blue-500 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                    <span>📘</span> Facebook
+                </a>
+                <a id="footerYoutubeLink" href="https://youtube.com/your_youtube_channel" target="_blank" class="flex items-center gap-1.5 bg-gray-900 border border-gray-700 hover:border-red-500 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                    <span>📺</span> YouTube
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-card border-t border-gray-800 flex justify-around py-3 z-50">
+        <a href="#" onclick="goHome()" class="flex flex-col items-center text-brand"><span class="text-xl">🏠</span><span class="text-[10px]">Home</span></a>
+        <a href="#moviesSection" onclick="filterMenu('All')" class="flex flex-col items-center text-gray-400"><span class="text-xl">🎬</span><span class="text-[10px]">ទាំងអស់</span></a>
+        <a href="#moviesSection" onclick="filterMenu('Free')" class="flex flex-col items-center text-gray-400"><span class="text-xl">🟢</span><span class="text-[10px]">ឥតគិតថ្លៃ</span></a>
+        <button onclick="openFavoritesModal()" class="flex flex-col items-center text-gray-400"><span class="text-xl">❤️</span><span class="text-[10px]">សំណព្វចិត្ត</span></button>
+        <button onclick="openTopupModal()" class="flex flex-col items-center text-gray-400"><span class="text-xl">💳</span><span class="text-[10px]">Top Up</span></button>
+    </nav>
+
+    <!-- General UI Scripts -->
+    <script>
+        let currentLang = localStorage.getItem('ai_legend_lang') || 'km';
+
+        const translations = {
+            km: {
+                home: "ទំព័រដើម",
+                allMovies: "រឿងទាំងអស់",
+                freeMovies: "រឿងឥតគិតថ្លៃ",
+                favorites: "រឿងសំណព្វចិត្ត",
+                purchased: "រឿងបានទិញ",
+                topup: "បញ្ចូលកាក់",
+                login: "ចូលគណនី",
+                logout: "ចាកចេញ",
+                searchPlaceholder: "ស្វែងរកចំណងជើងរឿងភាគ...",
+                categoriesTitle: "ស្វែងរកភាពយន្តតាមប្រភេទ (Categories)",
+                newReleases: "រឿងថ្មីថ្ងៃនេះ (New Movies Today)",
+                popularMovies: "រឿងពេញនិយមឥឡូវនេះ (Popular Movies)"
+            },
+            en: {
+                home: "Home",
+                allMovies: "All Movies",
+                freeMovies: "Free Movies",
+                favorites: "Favorites",
+                purchased: "Purchased",
+                topup: "Top Up",
+                login: "Sign In",
+                logout: "Sign Out",
+                searchPlaceholder: "Search movies by title...",
+                categoriesTitle: "Browse by Category",
+                newReleases: "New Movies Today",
+                popularMovies: "Popular Movies Now"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'km' ? 'en' : 'km';
+            localStorage.setItem('ai_legend_lang', currentLang);
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.innerText = translations[currentLang][key];
+                    }
+                }
+            });
+            const langLabel = document.getElementById('currentLangLabel');
+            if (langLabel) {
+                langLabel.innerText = currentLang === 'km' ? 'ខ្មែរ | ENG' : 'ENG | ខ្មែរ';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applyTranslations();
+        });
+
+        let selectedAmount = 2.50;
+        let selectedCoins = 50;
+        let selectedTitle = 'កញ្ចប់មូលដ្ឋាន';
+
+        let isSignUpMode = false;
+        window.toggleAuthMode = function() {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('loginModalTitle');
+            const desc = document.getElementById('loginModalDesc');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const toggleText = document.getElementById('authToggleText');
+            const toggleBtn = document.getElementById('authToggleBtn');
+
+            if(isSignUpMode) {
+                title.innerText = "បង្កើតគណនី CEO DRAMA";
+                desc.innerText = "បង្កើតលេខសម្ងាត់ផ្ទាល់ខ្លួនរបស់អ្នកដើម្បីចូលប្រើប្រាស់ថ្ងៃក្រោយ។";
+                submitBtn.innerText = "បង្កើតគណនីថ្មី (Sign Up)";
+                toggleText.innerText = "មានគណនីរួចហើយ?";
+                toggleBtn.innerText = "ចូលគណនី (Sign In)";
+            } else {
+                title.innerText = "ចូលគណនី CEO DRAMA";
+                desc.innerText = "សូមចូលគណនីជាមុនសិន ដើម្បីទស្សនារឿងភាគ និងទទួលបានកាដូរ VIP ២៤ម៉ោង។";
+                submitBtn.innerText = "ចូលគណនី (Sign In)";
+                toggleText.innerText = "មិនទាន់មានគណនី?";
+                toggleBtn.innerText = "បង្កើតថ្មី (Sign Up)";
+            }
+        }
+
+        window.handleEmailAuth = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+
+            try {
+                if(isSignUpMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            } catch(err) {
+                if (err.code === 'auth/unauthorized-domain') {
+                    alert("កំហុស Firebase (Unauthorized Domain):\n\nDomain ឬ File ដែលអ្នកកំពុងបើកដំណើរការមិនទាន់ត្រូវបានអនុញ្ញាតក្នុង Firebase Console ទេ។\n\nដំណោះស្រាយ:\n1. សូមដំណើរការ Project តាមរយៈ Local Web Server (ឧ. VS Code Live Server extension) មិនមែនបើក file:/// ដោយផ្ទាល់ទេ។\n2. ចូលទៅកាន់ Firebase Console -> Authentication -> Settings -> Authorized domains -> Add domain (`localhost` និង `127.0.0.1`)។");
+                } else {
+                    alert("កំហុស: " + err.message);
+                }
+            }
+        }
+
+        function selectPackage(amount, coins, title) {
+            selectedAmount = amount;
+            selectedCoins = coins;
+            selectedTitle = title;
+            document.getElementById('selectedPackageText').innerText = `$${amount.toFixed(2)} (${coins} pts)`;
+            
+            document.querySelectorAll('.pkg-card').forEach(card => {
+                card.className = "pkg-card border border-gray-700 bg-gray-900 p-3 rounded cursor-pointer hover:border-brand transition";
+            });
+            event.currentTarget.className = "pkg-card border-2 border-brand bg-purple-900/20 p-3 rounded cursor-pointer";
+        }
+
+        function openTopupModal() {
+            document.getElementById('topupModal').classList.remove('hide');
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.remove('hide');
+        }
+
+        function goHome() {
+            document.getElementById('playerView').classList.add('hide');
+            document.getElementById('homeView').classList.remove('hide');
+            const video = document.getElementById('mainVideoPlayer');
+            const iframe = document.getElementById('mainIframePlayer');
+            video.pause();
+            video.src = "";
+            iframe.src = "";
+        }
+
+        const mainLoginBtn = document.getElementById('mainLoginBtn');
+        if (mainLoginBtn) {
+            mainLoginBtn.addEventListener('click', openLoginModal);
+        }
+    </script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, getDoc, updateDoc, addDoc, deleteDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL1xfIbNIrJva-oii5UsRLXsdM20CW-Do",
+            authDomain: "ai-legend-ed971.firebaseapp.com",
+            projectId: "ai-legend-ed971",
+            storageBucket: "ai-legend-ed971.firebasestorage.app",
+            messagingSenderId: "477988006002",
+            appId: "1:477988006002:web:97be096e8964757d3bfaeb"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        let currentUser = null;
+        let allMoviesData = [];
+        let activeMovie = null;
+        let activeEpisodeNum = 1;
+        let isFavorite = false;
+        let activeSeasonUrlToPlay = "";
+
+        async function loadBannerCarousel() {
+            try {
+                const bannerSnap = await getDoc(doc(db, "settings", "home_banner"));
+                let data = null;
+                if(bannerSnap.exists()) {
+                    data = bannerSnap.data();
+                } else {
+                    const local = localStorage.getItem('admin_home_banner');
+                    if(local) data = JSON.parse(local);
+                }
+
+                if(data) {
+                    if(data.title) document.getElementById('bannerMainTitleText').innerText = data.title;
+                    if(data.description) document.getElementById('bannerMainDescText').innerText = data.description;
+                    
+                    const container = document.getElementById('homeBannerContainer');
+                    if(data.links && data.links.length > 0) {
+                        container.innerHTML = "";
+                        data.links.forEach((item, index) => {
+                            container.innerHTML += `
+                                <div onclick="openBannerMovie('${item.url}')" class="min-w-[140px] sm:min-w-[160px] md:min-w-[180px] bg-card rounded-xl overflow-hidden cursor-pointer hover:ring-2 hover:ring-brand transition relative group flex-shrink-0 shadow-lg border border-gray-800">
+                                    <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden bg-gray-900">
+                                        <img src="${item.poster || 'https://placehold.co/300x400'}" alt="Banner ${index + 1}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                        <div class="absolute top-2 left-2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded shadow">${index + 1}</div>
+                                    </div>
+                                    <div class="p-2.5 text-center bg-card">
+                                        <p class="text-xs font-bold truncate text-white">រឿងទី ${index + 1}</p>
+                                        <span class="text-[10px] text-brand">▶ ចុចទស្សនា</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+            } catch(e) { 
+                console.error("Error loading banner cards:", e); 
+            }
+        }
+
+        window.openBannerMovie = function(url) {
+            if(!url) {
+                alert("⚠️ តំណភ្ជាប់វីដេអូរឿងនេះមិនទាន់មានកំណត់ទេ។");
+                return;
+            }
+            const matchedMovie = allMoviesData.find(m => m.driveUrl === url || url.includes(m.id));
+            if(matchedMovie) {
+                openMoviePlayer(matchedMovie.id);
+            } else {
+                activeMovie = {
+                    id: 'banner_temp_' + Date.now(),
+                    title: 'រឿងល្បីប្រចាំសប្តាហ៍',
+                    category: 'Featured',
+                    episodes: 1,
+                    pricingMode: 'free',
+                    price: 'Free',
+                    description: 'ទស្សនារឿងល្បីប្រចាំសប្តាហ៍ដែលបានជ្រើសរើសពិសេសសម្រាប់អ្នក។',
+                    driveUrl: url
+                };
+                
+                document.getElementById('homeView').classList.add('hide');
+                document.getElementById('playerView').classList.remove('hide');
+                document.getElementById('playerMovieTitle').innerText = activeMovie.title;
+                document.getElementById('playerMovieCategory').innerText = activeMovie.category;
+                document.getElementById('playerMovieDesc').innerText = activeMovie.description;
+                document.getElementById('playerMoviePriceBadge').innerText = "🟢 ឥតគិតថ្លៃ (Free)";
+                document.getElementById('playerMovieSeasonBadge').classList.add('hide');
+                document.getElementById('seasonLinkContainer').classList.add('hide');
+                document.getElementById('episodesSectionContainer').classList.add('hide');
+
+                selectEpisode(1);
+            }
+        };
+
+        async function loadIndexDataFromFirebase() {
+            try {
+                const pkgSnap = await getDoc(doc(db, "settings", "topup_packages"));
+                const container = document.getElementById('indexPackagesGrid');
+                if (pkgSnap.exists() && pkgSnap.data().list) {
+                    const pkgs = pkgSnap.data().list;
+                    container.innerHTML = "";
+                    pkgs.forEach((p, idx) => {
+                        const isSelected = idx === 1;
+                        if(isSelected) {
+                            selectedAmount = p.amount;
+                            selectedCoins = p.coins;
+                            selectedTitle = p.title;
+                            document.getElementById('selectedPackageText').innerText = `$${p.amount.toFixed(2)} (${p.coins} pts)`;
+                        }
+                        container.innerHTML += `
+                            <div onclick="selectPackage(${p.amount}, ${p.coins}, '${p.title}')" class="pkg-card border ${isSelected ? 'border-2 border-brand bg-purple-900/20' : 'border-gray-700 bg-gray-900'} p-3 rounded cursor-pointer hover:border-brand transition">
+                                <p class="text-xs text-gray-300">${p.title}</p>
+                                <h4 class="text-base font-bold">$${p.amount.toFixed(2)}</h4>
+                                <p class="text-xs text-yellow-500">${p.coins} pts</p>
+                            </div>
+                        `;
+                    });
+                }
+
+                const qrSnap = await getDoc(doc(db, "settings", "qr_code"));
+                if(qrSnap.exists() && qrSnap.data().url) {
+                    document.getElementById('khqrDisplayImage').src = qrSnap.data().url;
+                }
+            } catch (err) {
+                console.error("Error loading index data:", err);
+            }
+        }
+
+        async function loadMovies() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "movies"));
+                allMoviesData = [];
+                querySnapshot.forEach((docSnap) => {
+                    allMoviesData.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // 1. Popular Movies (Sorted by ratingAvg desc, views desc)
+                const popularList = [...allMoviesData].sort((a, b) => (b.ratingAvg || 0) - (a.ratingAvg || 0) || (b.views || 0) - (a.views || 0));
+                renderGrid('popularMoviesGrid', popularList.slice(0, 5));
+
+                // 2. New Movies Today (Sorted by createdAt desc)
+                const newList = [...allMoviesData].sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+                renderGrid('newMoviesGrid', newList.slice(0, 5));
+
+                // 3. All Movies Grid by default
+                renderMovies(allMoviesData);
+            } catch (err) {
+                console.error("Error loading movies:", err);
+            }
+        }
+
+        window.renderGrid = function(elementId, moviesList) {
+            const grid = document.getElementById(elementId);
+            if(!grid) return;
+            grid.innerHTML = "";
+            if(moviesList.length === 0) {
+                grid.innerHTML = `<div class="bg-card border border-gray-800 p-6 rounded-lg text-center text-gray-500 col-span-full text-xs">មិនមានទិន្នន័យ។</div>`;
+                return;
+            }
+            moviesList.forEach((movie) => {
+                let pricingBadgeText = movie.price || 'Free';
+                if(movie.pricingMode === 'full_movie') pricingBadgeText = `🎬 រឿងពេញ (${movie.price})`;
+                if(movie.pricingMode === 'per_episode') pricingBadgeText = `🔓 ក្នុង១ភាគ (${movie.price})`;
+                const ratingText = movie.ratingAvg ? `⭐ ${movie.ratingAvg.toFixed(1)}` : '⭐ 5.0';
+
+                grid.innerHTML += `
+                    <div onclick="openMoviePlayer('${movie.id}')" class="bg-card rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-brand transition relative group flex flex-col justify-between shadow-lg border border-gray-800">
+                        <div>
+                            <div class="relative h-48 md:h-64 overflow-hidden bg-gray-900">
+                                <img src="${movie.poster || 'https://placehold.co/300x400'}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                <div class="absolute top-2 left-2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded shadow">${ratingText}</div>
+                                <div class="absolute top-2 right-2 bg-black/85 backdrop-blur px-2 py-1 text-[11px] text-yellow-400 font-bold rounded border border-gray-700">${pricingBadgeText}</div>
+                            </div>
+                            <div class="p-3 space-y-1">
+                                <h4 class="font-bold text-sm truncate">${movie.title}</h4>
+                                <p class="text-xs text-gray-400">${movie.episodes || 1} ភាគ • ${movie.category || 'General'}</p>
+                            </div>
+                        </div>
+                        <div class="p-3 pt-0">
+                            <button class="w-full bg-gray-800 hover:bg-brand text-white text-xs py-2 rounded font-bold transition">
+                                ▶ មើលរឿងនេះ
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.renderMovies = function(moviesList) {
+            renderGrid('publicMoviesGrid', moviesList);
+        }
+
+        window.openRatingModal = function() {
+            if(!currentUser) {
+                alert("⚠️ សូមចូលគណនីជាមុនសិន ដើម្បីឱ្យពិន្ទុរឿងភាគ!");
+                openLoginModal();
+                return;
+            }
+            document.getElementById('ratingModal').classList.remove('hide');
+        }
+
+        window.submitMovieRating = async function(stars) {
+            if(!currentUser || !activeMovie) return;
+            try {
+                const ratingRef = doc(db, "movies", activeMovie.id, "ratings", currentUser.uid);
+                await setDoc(ratingRef, {
+                    userId: currentUser.uid,
+                    rating: stars,
+                    updatedAt: serverTimestamp()
+                });
+
+                const ratingsSnap = await getDocs(collection(db, "movies", activeMovie.id, "ratings"));
+                let sum = 0;
+                let count = 0;
+                ratingsSnap.forEach(docSnap => {
+                    sum += docSnap.data().rating;
+                    count++;
+                });
+                const avg = count > 0 ? (sum / count) : stars;
+
+                const movieRef = doc(db, "movies", activeMovie.id);
+                await updateDoc(movieRef, {
+                    ratingAvg: Number(avg.toFixed(1)),
+                    ratingCount: count
+                });
+
+                activeMovie.ratingAvg = Number(avg.toFixed(1));
+                activeMovie.ratingCount = count;
+
+                document.getElementById('playerMovieRatingText').innerText = `${activeMovie.ratingAvg} (${activeMovie.ratingCount} នាក់)`;
+                document.getElementById('userCurrentRatingStatus').innerText = `✅ អ្នកបានឱ្យ ${stars} ផ្កាយដោយជោគជ័យ!`;
+                
+                setTimeout(() => {
+                    document.getElementById('ratingModal').classList.add('hide');
+                }, 1000);
+
+                loadMovies();
+            } catch(err) {
+                alert("កំហុសក្នុងការឱ្យពិន្ទុ: " + err.message);
+            }
+        }
+
+        function parseMovieLinks(driveUrlVal) {
+            let linksList = [];
+            if (!driveUrlVal) return linksList;
+            if (driveUrlVal.includes(' | ')) {
+                linksList = driveUrlVal.split(' | ').map(item => {
+                    if (item.includes('::')) {
+                        const parts = item.split('::');
+                        return { label: parts[0].trim(), url: parts[1].trim() };
+                    }
+                    return { label: '', url: item.trim() };
+                });
+            } else if (driveUrlVal.includes('::')) {
+                const parts = driveUrlVal.split('::');
+                linksList = [{ label: parts[0].trim(), url: parts[1].trim() }];
+            } else {
+                linksList = [{ label: '', url: driveUrlVal.trim() }];
+            }
+            return linksList;
+        }
+
+        window.openMoviePlayer = async function(movieId) {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Sign In) ជាមុនសិន ដើម្បីទស្សនារឿងភាគ!");
+                openLoginModal();
+                return;
+            }
+            const movie = allMoviesData.find(m => m.id === movieId);
+            if(!movie) return;
+            activeMovie = movie;
+
+            try {
+                const movieRef = doc(db, "movies", movieId);
+                await updateDoc(movieRef, { views: increment(1) });
+            } catch(e) { console.error(e); }
+
+            document.getElementById('homeView').classList.add('hide');
+            document.getElementById('playerView').classList.remove('hide');
+
+            document.getElementById('playerMovieTitle').innerText = movie.title;
+            document.getElementById('playerMovieCategory').innerText = movie.category || 'General';
+            document.getElementById('playerMovieDesc').innerText = movie.description || 'គ្មានសេចក្តីពណ៌នាទេ។';
+            
+            const seasonBadge = document.getElementById('playerMovieSeasonBadge');
+            const seasonContainer = document.getElementById('seasonLinkContainer');
+
+            if(movie.season) {
+                let seasonName = movie.season;
+                let seasonUrl = "";
+
+                if(movie.season.includes('|')) {
+                    const parts = movie.season.split('|').map(p => p.trim());
+                    seasonName = parts[0];
+                    seasonUrl = parts[1];
+                } else if(movie.season.startsWith('http://') || movie.season.startsWith('https://')) {
+                    seasonUrl = movie.season;
+                    seasonName = "រដូវកាលរឿង (Season Link)";
+                }
+
+                seasonBadge.textContent = seasonName;
+                seasonBadge.classList.remove('hide');
+
+                if(seasonUrl) {
+                    activeSeasonUrlToPlay = seasonUrl;
+                    document.getElementById('seasonLabelTitle').innerText = `🔗 ${seasonName}:`;
+                    document.getElementById('seasonThumbnail').src = movie.poster || 'https://placehold.co/80x60';
+                    document.getElementById('seasonLinkTextName').innerText = `▶ ចុចទស្សនា ${seasonName} ក្នុង App`;
+                    seasonContainer.classList.remove('hide');
+                } else {
+                    seasonContainer.classList.add('hide');
+                }
+            } else {
+                seasonBadge.classList.add('hide');
+                seasonContainer.classList.add('hide');
+            }
+
+            let badgeMode = "🟢 ឥតគិតថ្លៃ (Free)";
+            if(movie.pricingMode === 'full_movie') badgeMode = `🎬 កាត់ប្រាក់រឿងពេញ១រឿងចប់ (${movie.price})`;
+            if(movie.pricingMode === 'per_episode') badgeMode = `🔓 ដោះសោររៀងរាល់ភាគ (${movie.price})`;
+            document.getElementById('playerMoviePriceBadge').innerText = badgeMode;
+
+            if(currentUser) {
+                const favRef = doc(db, "users", currentUser.uid, "favorites", activeMovie.id);
+                const favSnap = await getDoc(favRef);
+                isFavorite = favSnap.exists();
+                updateFavoriteUI();
+            } else {
+                isFavorite = false;
+                updateFavoriteUI();
+            }
+            document.getElementById('playerMovieRatingText').innerText = movie.ratingAvg ? `${movie.ratingAvg} (${movie.ratingCount || 0} នាក់)` : '5.0 (0 នាក់)';
+            if(currentUser) {
+                const userRatingRef = doc(db, "movies", movie.id, "ratings", currentUser.uid);
+                const userRatingSnap = await getDoc(userRatingRef);
+                if(userRatingSnap.exists()) {
+                    document.getElementById('userCurrentRatingStatus').innerText = `⭐ អ្នកបានឱ្យ ${userRatingSnap.data().rating} ផ្កាយរួចហើយ`;
+                } else {
+                    document.getElementById('userCurrentRatingStatus').innerText = `អ្នកមិនទាន់បានឱ្យពិន្ទុ`;
+                }
+            } else {
+                document.getElementById('userCurrentRatingStatus').innerText = `សូមចូលគណនីដើម្បីឱ្យពិន្ទុ`;
+            }
+
+            const epSection = document.getElementById('episodesSectionContainer');
+            const linksList = parseMovieLinks(movie.driveUrl);
+            const epCount = Math.max(parseInt(movie.episodes) || 1, linksList.length);
+
+            if(movie.pricingMode === 'full_movie') {
+                epSection.classList.remove('hide');
+                document.getElementById('episodesGrid').classList.add('hide');
+            } else {
+                epSection.classList.remove('hide');
+                document.getElementById('episodesGrid').classList.remove('hide');
+                const epGrid = document.getElementById('episodesGrid');
+                epGrid.innerHTML = "";
+                for(let i = 1; i <= epCount; i++) {
+                    const linkItem = linksList[i - 1];
+                    const epLabel = linkItem && linkItem.label ? linkItem.label : `ភាគទី ${i}`;
+                    epGrid.innerHTML += `
+                        <button onclick="selectEpisode(${i})" id="ep-btn-${i}" class="ep-btn bg-gray-900 border border-gray-700 hover:border-brand py-2 rounded text-xs font-bold transition text-center truncate px-1" title="${epLabel}">
+                            ${epLabel}
+                        </button>
+                    `;
+                }
+            }
+
+            selectEpisode(1);
+        }
+
+        window.playSeasonLink = function() {
+            if(!activeSeasonUrlToPlay) return;
+            let url = activeSeasonUrlToPlay;
+            
+            if (url.includes('drive.google.com')) {
+                if (url.includes('/view')) {
+                    url = url.replace('/view', '/preview');
+                } else if (!url.includes('/preview')) {
+                    url = url.replace(/\/d\/(.*?)\/.*/, '/d/$1/preview');
+                }
+            }
+
+            const video = document.getElementById('mainVideoPlayer');
+            const iframe = document.getElementById('mainIframePlayer');
+            const overlay = document.getElementById('videoLockOverlay');
+
+            overlay.classList.add('hide');
+
+            if(url.includes('youtube.com') || url.includes('youtu.be') || url.includes('drive.google.com') || url.includes('embed') || url.includes('preview')) {
+                video.classList.add('hide');
+                video.pause();
+                video.src = "";
+                iframe.classList.remove('hide');
+                
+                let embedUrl = url;
+                if(url.includes('watch?v=')) {
+                    embedUrl = url.replace('watch?v=', 'embed/');
+                } else if(url.includes('youtu.be/')) {
+                    embedUrl = url.replace('youtu.be/', 'youtube.com/embed/');
+                }
+                iframe.src = embedUrl;
+            } else {
+                iframe.classList.add('hide');
+                iframe.src = "";
+                video.classList.remove('hide');
+                video.src = url;
+                video.play().catch(e => console.log(e));
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.toggleFavorite = async function() {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Login) ជាមុនសិនដើម្បីប្រើប្រាស់មុខងារដាក់ចូលសំណព្វចិត្ត!");
+                openLoginModal();
+                return;
+            }
+            if(!activeMovie) return;
+
+            const favRef = doc(db, "users", currentUser.uid, "favorites", activeMovie.id);
+            try {
+                if(isFavorite) {
+                    await deleteDoc(favRef);
+                    isFavorite = false;
+                    alert("✅ បានដកចេញពីបញ្ជីសំណព្វចិត្ត!");
+                } else {
+                    await setDoc(favRef, {
+                        movieId: activeMovie.id,
+                        title: activeMovie.title,
+                        poster: activeMovie.poster,
+                        addedAt: serverTimestamp()
+                    });
+                    isFavorite = true;
+                    alert("❤️ បានដាក់ចូលក្នុងបញ្ជីសំណព្វចិត្តដោយជោគជ័យ!");
+                }
+                updateFavoriteUI();
+            } catch(e) {
+                alert("កំហុស: " + e.message);
+            }
+        };
+
+        function updateFavoriteUI() {
+            const heartIcon = document.getElementById('favHeartIcon');
+            const favText = document.getElementById('favText');
+            if(isFavorite) {
+                heartIcon.textContent = "❤️";
+                heartIcon.className = "text-base text-red-500";
+                favText.textContent = "បានចូលចិត្ត";
+            } else {
+                heartIcon.textContent = "🤍";
+                heartIcon.className = "text-base text-gray-400";
+                favText.textContent = "ចូលចិត្ត";
+            }
+        }
+
+        window.openFavoritesModal = async function() {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Login) ជាមុនសិន!");
+                openLoginModal();
+                return;
+            }
+            document.getElementById('favoritesModal').classList.remove('hide');
+            const grid = document.getElementById('favoritesModalGrid');
+            grid.innerHTML = `<p class="text-gray-400 text-xs text-center col-span-full py-8">កំពុងទាញយកទិន្នន័យ...</p>`;
+
+            try {
+                const snap = await getDocs(collection(db, "users", currentUser.uid, "favorites"));
+                if(snap.empty) {
+                    grid.innerHTML = `<p class="text-gray-500 text-xs text-center col-span-full py-8">មិនទាន់មានរឿងក្នុងបញ្ជីសំណព្វចិត្តនៅឡើយទេ។</p>`;
+                    return;
+                }
+                grid.innerHTML = "";
+                snap.forEach(d => {
+                    const item = d.data();
+                    grid.innerHTML += `
+                        <div onclick="document.getElementById('favoritesModal').classList.add('hide'); openMoviePlayer('${item.movieId}');" class="bg-gray-900 border border-gray-800 rounded-lg p-2 cursor-pointer hover:border-brand flex gap-2 items-center">
+                            <img src="${item.poster || 'https://placehold.co/40x50'}" class="w-12 h-14 object-cover rounded">
+                            <div class="overflow-hidden">
+                                <h4 class="text-xs font-bold truncate text-white">${item.title}</h4>
+                                <span class="text-[10px] text-brand">▶ មើលរឿងនេះ</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                grid.innerHTML = `<p class="text-red-500 text-xs text-center col-span-full">កំហុស: ${e.message}</p>`;
+            }
+        };
+
+        window.openPurchasesModal = async function() {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Login) ជាមុនសិន!");
+                openLoginModal();
+                return;
+            }
+            document.getElementById('purchasesModal').classList.remove('hide');
+            const grid = document.getElementById('purchasesModalGrid');
+            grid.innerHTML = `<p class="text-gray-400 text-xs text-center col-span-full py-8">កំពុងទាញយកទិន្នន័យ...</p>`;
+
+            try {
+                const unlockedMoviesSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_movies"));
+                const unlockedEpsSnap = await getDocs(collection(db, "users", currentUser.uid, "unlocked_episodes"));
+                
+                let purchasedMovieIds = new Set();
+                unlockedMoviesSnap.forEach(d => purchasedMovieIds.add(d.data().movieId));
+                unlockedEpsSnap.forEach(d => purchasedMovieIds.add(d.data().movieId));
+
+                if(purchasedMovieIds.size === 0) {
+                    grid.innerHTML = `<p class="text-gray-500 text-xs text-center col-span-full py-8">អ្នកមិនទាន់បានទិញ ឬដោះសោររឿងណាមួយនៅឡើយទេ។</p>`;
+                    return;
+                }
+
+                grid.innerHTML = "";
+                purchasedMovieIds.forEach(mId => {
+                    const foundMovie = allMoviesData.find(m => m.id === mId);
+                    if(foundMovie) {
+                        grid.innerHTML += `
+                            <div onclick="document.getElementById('purchasesModal').classList.add('hide'); openMoviePlayer('${foundMovie.id}');" class="bg-gray-900 border border-gray-800 rounded-lg p-2 cursor-pointer hover:border-brand flex gap-2 items-center">
+                                <img src="${foundMovie.poster || 'https://placehold.co/40x50'}" class="w-12 h-14 object-cover rounded">
+                                <div class="overflow-hidden">
+                                    <h4 class="text-xs font-bold truncate text-white">${foundMovie.title}</h4>
+                                    <span class="text-[10px] text-yellow-400">🛍️ បានទិញរួចរាល់</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            } catch(e) {
+                grid.innerHTML = `<p class="text-red-500 text-xs text-center col-span-full">កំហុស: ${e.message}</p>`;
+            }
+        };
+
+        window.selectEpisode = async function(epNum) {
+            activeEpisodeNum = epNum;
+            document.querySelectorAll('.ep-btn').forEach(b => b.className = "ep-btn bg-gray-900 border border-gray-700 hover:border-brand py-2 rounded text-xs font-bold transition text-center");
+            const activeBtn = document.getElementById(`ep-btn-${epNum}`);
+            if(activeBtn) activeBtn.className = "ep-btn bg-brand text-white border-2 border-white py-2 rounded text-xs font-bold transition text-center shadow";
+
+            const mode = activeMovie.pricingMode || 'per_episode';
+            const isFree = mode === 'free' || !activeMovie.price || activeMovie.price.toLowerCase().includes('free');
+            
+            // Check if user has active VIP 24h Free gift
+            let isVipActive = false;
+            if (currentUser) {
+                try {
+                    const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        if (userData.vipExpiresAt && userData.vipExpiresAt > Date.now()) {
+                            isVipActive = true;
+                        }
+                    }
+                } catch(e) {
+                    console.error("Error checking VIP status:", e);
+                }
+            }
+
+            let isUnlocked = isFree || isVipActive;
+
+            if(currentUser && !isUnlocked) {
+                if(mode === 'full_movie') {
+                    const unlockRef = doc(db, "users", currentUser.uid, "unlocked_movies", activeMovie.id);
+                    const unlockSnap = await getDoc(unlockRef);
+                    if(unlockSnap.exists()) isUnlocked = true;
+                } else {
+                    if(epNum === 1) isUnlocked = true;
+                    else {
+                        const unlockRef = doc(db, "users", currentUser.uid, "unlocked_episodes", `${activeMovie.id}_ep_${epNum}`);
+                        const unlockSnap = await getDoc(unlockRef);
+                        if(unlockSnap.exists()) isUnlocked = true;
+                    }
+                }
+            } else if (!currentUser && isFree) {
+                isUnlocked = true;
+            }
+
+            const video = document.getElementById('mainVideoPlayer');
+            const iframe = document.getElementById('mainIframePlayer');
+            const overlay = document.getElementById('videoLockOverlay');
+
+            if(isUnlocked) {
+                overlay.classList.add('hide');
+                
+                let driveUrlVal = activeMovie.driveUrl || "";
+                const linksList = parseMovieLinks(driveUrlVal);
+                let url = "";
+                if (linksList[epNum - 1] && linksList[epNum - 1].url) {
+                    url = linksList[epNum - 1].url;
+                } else if (linksList.length > 0) {
+                    url = linksList[0].url;
+                }
+                
+                if (url.includes('drive.google.com')) {
+                    if (url.includes('/view')) {
+                        url = url.replace('/view', '/preview');
+                    } else if (!url.includes('/preview')) {
+                        url = url.replace(/\/d\/(.*?)\/.*/, '/d/$1/preview');
+                    }
+                }
+
+                if(url.includes('youtube.com') || url.includes('youtu.be') || url.includes('drive.google.com') || url.includes('embed') || url.includes('preview')) {
+                    video.classList.add('hide');
+                    video.pause();
+                    video.src = "";
+                    iframe.classList.remove('hide');
+                    
+                    let embedUrl = url;
+                    if(url.includes('watch?v=')) {
+                        embedUrl = url.replace('watch?v=', 'embed/');
+                    } else if(url.includes('youtu.be/')) {
+                        embedUrl = url.replace('youtu.be/', 'youtube.com/embed/');
+                    }
+                    iframe.src = embedUrl;
+                } else {
+                    iframe.classList.add('hide');
+                    iframe.src = "";
+                    video.classList.remove('hide');
+                    video.src = url || "https://www.w3schools.com/html/mov_bbb.mp4";
+                    video.play().catch(e => console.log(e));
+                }
+            } else {
+                video.pause();
+                video.src = "";
+                iframe.src = "";
+                overlay.classList.remove('hide');
+                
+                if(mode === 'full_movie') {
+                    document.getElementById('lockTitle').innerText = `រឿងនេះទាមទារការបង់ប្រាក់រឿងពេញ១រឿងចប់`;
+                    document.getElementById('lockDesc').innerText = `តម្លៃរឿងពេញ: ${activeMovie.price}. សូមចំណាយកាក់ដើម្បីដោះសោរមើលរឿងនេះរហូតដល់ចប់។`;
+                } else {
+                    document.getElementById('lockTitle').innerText = `ភាគទី ${epNum} ទាមទារការដោះសោរ`;
+                    document.getElementById('lockDesc').innerText = `រឿងនេះកំណត់តម្លៃ: ${activeMovie.price}. សូមចំណាយកាក់ដើម្បីទស្សនាវគ្គនេះ។`;
+                }
+            }
+        }
+
+        window.unlockContent = async function() {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Login) ជាមុនសិនដើម្បីដោះសោររឿងភាគ!");
+                openLoginModal();
+                return;
+            }
+
+            let cost = 1.0;
+            const priceStr = String(activeMovie.price || "1");
+            const match = priceStr.match(/(\d+(\.\d+)?)/);
+            if(match) {
+                cost = parseFloat(match[1]) || 1.0;
+            }
+
+            const mode = activeMovie.pricingMode || 'per_episode';
+            const actionTitle = mode === 'full_movie' ? `រឿងពេញ "${activeMovie.title}"` : `ភាគទី ${activeEpisodeNum} នៃរឿង "${activeMovie.title}"`;
+
+            const userRef = doc(db, "users", currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            const currentCoins = userSnap.exists() ? (userSnap.data().coins || 0) : 0;
+            const spentCoins = userSnap.exists() ? (userSnap.data().spentCoins || 0) : 0;
+            const totalSpent = userSnap.exists() ? (userSnap.data().totalSpent || 0) : 0;
+
+            if(currentCoins < cost) {
+                alert(`❌ សមតុល្យ Coins របស់អ្នកមិនគ្រប់គ្រាន់ទេ! (ត្រូវការ ${cost} pts, មាន ${currentCoins} pts)`);
+                openTopupModal();
+                return;
+            }
+
+            if(!confirm(`តើអ្នកពិតជាចង់ចំណាយ ${cost} pts ដើម្បីដោះសោរ ${actionTitle} មែនទេ?`)) return;
+
+            try {
+                const newBalance = Number((currentCoins - cost).toFixed(2));
+                const newSpentCoins = Number((spentCoins + cost).toFixed(2));
+                const newTotalSpent = Number((totalSpent + cost).toFixed(2));
+
+                await updateDoc(userRef, {
+                    coins: newBalance,
+                    spentCoins: newSpentCoins,
+                    totalSpent: newTotalSpent
+                });
+
+                if(mode === 'full_movie') {
+                    await setDoc(doc(db, "users", currentUser.uid, "unlocked_movies", activeMovie.id), {
+                        movieId: activeMovie.id,
+                        unlockedAt: serverTimestamp()
+                    });
+                } else {
+                    await setDoc(doc(db, "users", currentUser.uid, "unlocked_episodes", `${activeMovie.id}_ep_${activeEpisodeNum}`), {
+                        movieId: activeMovie.id,
+                        episode: activeEpisodeNum,
+                        unlockedAt: serverTimestamp()
+                    });
+                }
+
+                document.getElementById('userBalance').textContent = `💰 ${newBalance} pts`;
+                alert("🔓 ដោះសោរដោយជោគជ័យ!");
+                selectEpisode(activeEpisodeNum);
+            } catch (err) {
+                alert("កំហុសក្នុងការដោះសោរ: " + err.message);
+            }
+        }
+
+        window.handleSearch = function(keyword) {
+            const query = keyword.toLowerCase().trim();
+            if(!query) {
+                renderMovies(allMoviesData);
+                return;
+            }
+            const filtered = allMoviesData.filter(movie => 
+                movie.title && movie.title.toLowerCase().includes(query)
+            );
+            renderMovies(filtered);
+        }
+
+        window.filterCategory = function(cat) {
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = "cat-btn bg-card border border-gray-700 text-gray-300 px-4 py-2 rounded-full whitespace-nowrap text-sm hover:bg-gray-800 transition";
+            });
+            event.target.className = "cat-btn bg-brand text-white px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition";
+
+            if(cat === 'All') renderMovies(allMoviesData);
+            else renderMovies(allMoviesData.filter(m => m.category === cat));
+        }
+
+        window.submitReceiptAdmin = async function() {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Login) ជាមុនសិន!");
+                openLoginModal();
+                return;
+            }
+            const fileInput = document.getElementById('receiptFile');
+            if(fileInput.files.length === 0) {
+                alert("សូមជ្រើសរើសរូបភាពបង្កាន់ដៃផ្ទេរប្រាក់ជាមុនសិន!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64Receipt = reader.result;
+                try {
+                    await addDoc(collection(db, "topup_requests"), {
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email || currentUser.displayName,
+                        amount: `$${selectedAmount.toFixed(2)} (${selectedTitle})`,
+                        coins: selectedCoins,
+                        receiptUrl: base64Receipt,
+                        timestamp: serverTimestamp()
+                    });
+                    alert("✅ បានបញ្ជូនបង្កាន់ដៃទៅ Admin ដោយជោគជ័យ! សូមរង់ចាំ Admin អនុម័តកាក់ជូន។");
+                    document.getElementById('topupModal').classList.add('hide');
+                    fileInput.value = "";
+                } catch (err) {
+                    alert("មានបញ្ហា៖ " + err.message);
+                }
+            };
+        }
+
+        window.submitReceiptTelegram = async function() {
+            if(!currentUser) {
+                alert("សូមចូលគណនី (Login) ជាមុនសិន!");
+                openLoginModal();
+                return;
+            }
+            const fileInput = document.getElementById('receiptFile');
+            if(fileInput.files.length === 0) {
+                alert("សូមជ្រើសរើសរូបភាពបង្កាន់ដៃផ្ទេរប្រាក់ជាមុនសិន!");
+                return;
+            }
+
+            let telegramTarget = "your_admin_telegram";
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "receipt_telegram"));
+                if(docSnap.exists() && docSnap.data().url) {
+                    let urlVal = docSnap.data().url.trim();
+                    if(urlVal.includes('t.me/')) {
+                        const parts = urlVal.split('t.me/');
+                        telegramTarget = parts[1].split('?')[0];
+                    } else {
+                        telegramTarget = urlVal;
+                    }
+                }
+            } catch(e) {
+                console.error("Error loading receipt telegram link:", e);
+            }
+
+            const userName = currentUser.displayName || "User";
+            const userEmail = currentUser.email || "No Email";
+            const message = encodeURIComponent(`សួស្តី Admin! ខ្ញុំបាទ/នាងខ្ញុំ (${userName} - ${userEmail}) បានស្នើសុំបញ្ចូលទឹកប្រាក់ចំនួន $${selectedAmount.toFixed(2)} (${selectedTitle} - ${selectedCoins} pts) ។ នេះជាបង្កាន់ដៃទូទាត់ប្រាក់របស់ខ្ញុំ។`);
+            
+            const telegramUrl = `https://t.me/${telegramTarget}?text=${message}`;
+            window.open(telegramUrl, '_blank');
+            alert("✈️ កំពុងបញ្ជូនបន្តទៅកាន់ Telegram សូមផ្ញើរូបភាពបង្កាន់ដៃ (Receipt) របស់អ្នកចូលទៅក្នុងแຊទ Admin ជាការស្រេច!");
+            document.getElementById('topupModal').classList.add('hide');
+        }
+
+        async function loadFooterSocialLinks() {
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "social_links"));
+                if(docSnap.exists()) {
+                    const data = docSnap.data();
+                    if(data.telegram && document.getElementById('footerTelegramLink')) {
+                        document.getElementById('footerTelegramLink').href = data.telegram;
+                    }
+                    if(data.facebook && document.getElementById('footerFacebookLink')) {
+                        document.getElementById('footerFacebookLink').href = data.facebook;
+                    }
+                    if(data.youtube && document.getElementById('footerYoutubeLink')) {
+                        document.getElementById('footerYoutubeLink').href = data.youtube;
+                    }
+                }
+            } catch(e) {
+                console.error("Error loading footer social links:", e);
+            }
+        }
+        loadFooterSocialLinks();
+
+        loadBannerCarousel();
+        loadIndexDataFromFirebase();
+        loadMovies();
+
+        const btnGoogleLogin = document.getElementById('btnGoogleLogin');
+        if (btnGoogleLogin) {
+            btnGoogleLogin.addEventListener('click', () => {
+                signInWithPopup(auth, googleProvider).catch(err => {
+                    if (err.code === 'auth/unauthorized-domain') {
+                        alert("កំហុស Firebase (Unauthorized Domain):\n\nDomain ឬ File ដែលអ្នកកំពុងបើកដំណើរការមិនទាន់ត្រូវបានអនុញ្ញាតក្នុង Firebase Console ទេ។\n\nដំណោះស្រាយ:\n1. សូមដំណើរការ Project តាមរយៈ Local Web Server (ឧ. VS Code Live Server extension) មិនមែនបើក file:/// ដោយផ្ទាល់ទេ។\n2. ចូលទៅកាន់ Firebase Console -> Authentication -> Settings -> Authorized domains -> Add domain (`localhost` និង `127.0.0.1`)។");
+                    } else {
+                        alert(err.message);
+                    }
+                });
+            });
+        }
+
+        let vipTimerInterval = null;
+        function startVipCountdown(expiresAt) {
+            const banner = document.getElementById('vipCountdownBanner');
+            const timerEl = document.getElementById('vipCountdownTimer');
+            if (!banner || !timerEl) return;
+
+            if (vipTimerInterval) clearInterval(vipTimerInterval);
+
+            const updateTimer = () => {
+                const now = Date.now();
+                const diff = expiresAt - now;
+                if (diff <= 0) {
+                    banner.classList.add('hidden');
+                    if (vipTimerInterval) clearInterval(vipTimerInterval);
+                    return;
+                }
+
+                banner.classList.remove('hidden');
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                timerEl.textContent = `${String(hours).padStart(2, '0')}ម៉ោង ${String(minutes).padStart(2, '0')}នាទី ${String(seconds).padStart(2, '0')}វិនាទី`;
+            };
+
+            updateTimer();
+            vipTimerInterval = setInterval(updateTimer, 1000);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            const loginBtn = document.getElementById('mainLoginBtn');
+            const userInfo = document.getElementById('userInfo');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const userBalance = document.getElementById('userBalance');
+            const vipBanner = document.getElementById('vipCountdownBanner');
+
+            if (user) {
+                if (loginBtn) loginBtn.classList.add('hide');
+                if (userInfo) {
+                    userInfo.classList.remove('hidden');
+                    userInfo.classList.add('flex');
+                    userAvatar.src = user.photoURL || 'https://placehold.co/40x40';
+                    userName.textContent = user.displayName || user.email.split('@')[0];
+                }
+
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                let userData = {};
+                if (!userSnap.exists()) {
+                    // First time signup! Grant 24h VIP gift
+                    const vipExpires = Date.now() + 24 * 60 * 60 * 1000;
+                    userData = {
+                        name: user.displayName || user.email.split('@')[0],
+                        email: user.email,
+                        photoURL: user.photoURL || 'https://placehold.co/40x40',
+                        coins: 0,
+                        spentCoins: 0,
+                        totalTopup: 0,
+                        totalSpent: 0,
+                        vipExpiresAt: vipExpires,
+                        lastLogin: new Date()
+                    };
+                    await setDoc(userRef, userData);
+                    // Show VIP Surprise Modal
+                    document.getElementById('vipGiftModal').classList.remove('hide');
+                } else {
+                    userData = userSnap.data();
+                }
+
+                userBalance.textContent = `💰 ${userData.coins || 0} pts`;
+                document.getElementById('loginModal').classList.add('hide');
+
+                // Check VIP status and start countdown if active
+                if (userData.vipExpiresAt && userData.vipExpiresAt > Date.now()) {
+                    startVipCountdown(userData.vipExpiresAt);
+                } else {
+                    if (vipBanner) vipBanner.classList.add('hidden');
+                    if (vipTimerInterval) clearInterval(vipTimerInterval);
+                }
+            } else {
+                if (loginBtn) {
+                    loginBtn.classList.remove('hide');
+                    // Automatically prompt login modal on startup if not logged in
+                    openLoginModal();
+                }
+                if (userInfo) {
+                    userInfo.classList.add('hidden');
+                    userInfo.classList.remove('flex');
+                }
+                userBalance.textContent = `💰 0 pts`;
+                if (vipBanner) vipBanner.classList.add('hidden');
+                if (vipTimerInterval) clearInterval(vipTimerInterval);
+            }
+        });
+
+        const btnLogout = document.getElementById('btnLogout');
+        if (btnLogout) {
+            btnLogout.addEventListener('click', () => { signOut(auth); });
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed: ', err));
+            });
+        }
+    </script>
+    <!-- Anti-Screenshot & Anti-ScreenRecord Privacy Warning Modal -->
+    <div id="privacyWarningModal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[999] hide p-4">
+        <div class="bg-gradient-to-tr from-red-950 to-gray-900 border-2 border-red-500 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl space-y-4 animate-bounce">
+            <div class="w-16 h-16 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center text-3xl mx-auto text-red-400">🛡️</div>
+            <h3 class="text-xl font-extrabold text-red-400">កិច្ចការពារកម្មសិទ្ធិបញ្ញា</h3>
+            <p class="text-base font-bold text-white bg-red-950/50 p-3 rounded-xl border border-red-500/30">
+                សូមគោរពកម្មសិទ្ធឯកជន ហាមថតចម្លង
+            </p>
+            <p class="text-xs text-gray-400">ប្រព័ន្ធបានរកឃើញសកម្មភាពថតអេក្រង់ (Screenshot/Screenrecord) ឬការចម្លង ដែលត្រូវបានហាមឃាត់នៅលើប្រព័ន្ធ Window, macOS, iOS និង Android។</p>
+            <button onclick="document.getElementById('privacyWarningModal').classList.add('hide')" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl text-sm transition shadow-lg">
+                យល់ព្រម (OK)
+            </button>
+        </div>
+    </div>
+
+    <style>
+        /* Anti-Copy and Anti-Selection CSS */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+    </style>
+
+    <script>
+        function showPrivacyWarning() {
+            const modal = document.getElementById('privacyWarningModal');
+            if (modal) {
+                modal.classList.remove('hide');
+            }
+        }
+
+        // Disable right click context menu
+        document.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            showPrivacyWarning();
+            return false;
+        });
+
+        // Detect PrintScreen and Screenshot shortcuts across Windows, macOS, iOS, Android
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen') {
+                e.preventDefault();
+                try { navigator.clipboard.writeText(''); } catch(err) {}
+                showPrivacyWarning();
+                return false;
+            }
+
+            if (
+                ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 's' || e.key === 'S' || e.key === '3' || e.key === '4' || e.key === '5' || e.key === 'I' || e.key === 'i')) ||
+                ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))
+            ) {
+                e.preventDefault();
+                showPrivacyWarning();
+                return false;
+            }
+        });
+    </script>
+
+</body>
+</html>

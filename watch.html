@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">CEO DRAMA - Watch Movie</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <meta name="theme-color" content="#a855f7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CEO DRAMA">
+    <link rel="apple-touch-icon" href="logo.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Battambang', sans-serif; background-color: #0b0f19; color: white; }
+        .bg-card { background-color: #161b2c; }
+        .text-brand { color: #a855f7; }
+        .bg-brand { background-color: #a855f7; }
+        .bg-brand:hover { background-color: #9333ea; }
+        .hide { display: none !important; }
+        /* Custom Scrollbar for Episode List */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-card border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-gray-400 hover:text-white transition flex items-center gap-1 text-sm">
+                ❮ ត្រឡប់ក្រោយ
+            </a>
+            <span class="text-gray-600">|</span>
+            <h1 id="navMovieTitle" class="font-bold text-lg text-white truncate max-w-xs md:max-w-md">កំពុងទាញយកចំណងជើង...</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="toggleLanguage()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-2.5 py-1.5 rounded-lg font-bold border border-gray-700 flex items-center gap-1 transition">
+                🌐 <span id="currentLangLabel">ខ្មែរ | ENG</span>
+            </button>
+            <div class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5">
+                <span data-key="coinsLabel">💰 កាក់របស់អ្នក:</span>
+                <span id="userCoins" class="font-bold text-yellow-400">...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Watch Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left & Center: Video Player & Movie Info (2 Columns on Large Screen) -->
+        <div class="lg:col-span-2 space-y-4">
+            <!-- Video Player Box -->
+            <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-gray-800 shadow-2xl flex items-center justify-center">
+                <!-- Lock Screen Overlay (បើត្រូវឡុក/Unlock ភាគพิเศษ) -->
+                <div id="lockedOverlay" class="absolute inset-0 bg-black/90 z-20 flex flex-col items-center justify-center p-6 text-center hide">
+                    <div class="w-16 h-16 bg-brand/20 rounded-full flex items-center justify-center text-3xl mb-3 text-brand">🔒</div>
+                    <h3 class="text-xl font-bold mb-1">ភាគនេះជាប់សោរ (Locked Episode)</h3>
+                    <p class="text-sm text-gray-400 mb-4">សូមចំណាយកាក់ចំនួន <span id="unlockCost" class="text-yellow-400 font-bold">10</span> កាក់ ដើម្បីដោះសោរមើលភាគនេះជាស្ថាពរ។</p>
+                    <button id="btnUnlock" class="bg-brand px-6 py-2.5 rounded-lg font-bold text-sm shadow-lg transition">ដោះសោរឥឡូវនេះ</button>
+                </div>
+
+                <!-- Actual Video Element (iframe ឬ video tag) -->
+                <iframe id="videoPlayer" src="" class="w-full h-full border-0" allowfullscreen></iframe>
+            </div>
+
+            <!-- Current Episode Title & Info -->
+            <div class="bg-card p-5 rounded-xl border border-gray-800">
+                <div class="flex justify-between items-start gap-4">
+                    <div>
+                        <h2 id="currentEpTitle" class="text-xl font-bold mb-1">ភាគទី 1</h2>
+                        <p id="movieCategoryText" class="text-xs text-gray-400">Category: Loading...</p>
+                    </div>
+                    <span id="epBadge" class="bg-purple-900/50 text-brand border border-purple-700/50 text-xs px-3 py-1 rounded-full font-bold">Free Episode</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Episodes Playlist -->
+        <div class="bg-card rounded-xl border border-gray-800 p-4 flex flex-col h-[500px] lg:h-auto">
+            <h3 class="font-bold text-base mb-3 pb-2 border-b border-gray-800 flex justify-between items-center">
+                <span>បញ្ជីភាគ (Episodes)</span>
+                <span id="totalEpCount" class="text-xs text-gray-400 font-normal">0 ភាគ</span>
+            </h3>
+
+            <!-- Episodes Scrollable List -->
+            <div id="episodesList" class="flex-1 overflow-y-auto space-y-2 pr-1">
+                <!-- Dynamic Episodes injected via JS -->
+                <div class="text-center text-gray-500 py-10 text-sm">កំពុងទាញយកបញ្ជីភាគ...</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Firebase SDK & Watch Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL1xfIbNIrJva-oii5UsRLXsdM20CW-Do",
+            authDomain: "ai-legend-ed971.firebaseapp.com",
+            projectId: "ai-legend-ed971",
+            storageBucket: "ai-legend-ed971.firebasestorage.app",
+            messagingSenderId: "477988006002",
+            appId: "1:477988006002:web:97be096e8964757d3bfaeb"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ดึง Movie ID มาจาก URL Parameters (ឧ. watch.html?id=MOVIE_ID)
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
+
+        if (!movieId) {
+            alert("រកមិនឃើញទិន្នន័យរឿងនេះទេ!");
+            window.location.href = "index.html";
+        }
+
+        let currentUser = null;
+        let isVipActive = false;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                alert("សូមចូលគណនី (Sign In) ជាមុនសិន!");
+                window.location.href = "index.html";
+                return;
+            }
+            currentUser = user;
+            await fetchUserData(user.uid);
+            loadMovieDetails();
+        });
+
+        let currentMovieData = null;
+
+        function parseMovieLinks(driveUrlVal) {
+            let linksList = [];
+            if (!driveUrlVal) return linksList;
+            if (driveUrlVal.includes(' | ')) {
+                linksList = driveUrlVal.split(' | ').map(item => {
+                    if (item.includes('::')) {
+                        const parts = item.split('::');
+                        return { label: parts[0].trim(), url: parts[1].trim() };
+                    }
+                    return { label: '', url: item.trim() };
+                });
+            } else if (driveUrlVal.includes('::')) {
+                const parts = driveUrlVal.split('::');
+                linksList = [{ label: parts[0].trim(), url: parts[1].trim() }];
+            } else {
+                linksList = [{ label: '', url: driveUrlVal.trim() }];
+            }
+            return linksList;
+        }
+
+        async function fetchUserData(uid) {
+            try {
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('userCoins').innerText = data.coins || 0;
+                    if (data.vipExpiresAt && data.vipExpiresAt > Date.now()) {
+                        isVipActive = true;
+                        document.getElementById('epBadge').innerText = "VIP 24h Free Active";
+                    }
+                } else {
+                    document.getElementById('userCoins').innerText = "0";
+                }
+            } catch (e) {
+                console.error("Error fetching user coins:", e);
+                document.getElementById('userCoins').innerText = "0";
+            }
+        }
+
+        // โหลดข้อมูลภาพยนตร์และรายชื่อភាគ
+        async function loadMovieDetails() {
+            try {
+                const movieDocRef = doc(db, "movies", movieId);
+                const movieSnap = await getDoc(movieDocRef);
+
+                if (!movieSnap.exists()) {
+                    alert("រឿងនេះត្រូវបានលុប ឬមិនមានក្នុងប្រព័ន្ធ!");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                const movie = movieSnap.data();
+                currentMovieData = movie;
+                document.getElementById('pageTitle').innerText = `CEO DRAMA - ${movie.title}`;
+                document.getElementById('navMovieTitle').innerText = movie.title;
+                document.getElementById('movieCategoryText').innerText = `ប្រភេទ: ${movie.category || 'ทั่วไป'}`;
+                
+                const linksList = parseMovieLinks(movie.driveUrl);
+                const totalEpisodes = Math.max(parseInt(movie.episodes) || 1, linksList.length);
+                document.getElementById('totalEpCount').innerText = `${totalEpisodes} ភាគ`;
+
+                // สร้าง List ភាគតាមចំនួនដែលបានកំណត់ (ឧ. 1 ដល់ N)
+                const episodesContainer = document.getElementById('episodesList');
+                episodesContainer.innerHTML = "";
+
+                for (let i = 1; i <= totalEpisodes; i++) {
+                    const linkItem = linksList[i - 1];
+                    const epLabel = linkItem && linkItem.label ? linkItem.label : `ភាគទី ${i}`;
+                    const isFree = isVipActive || (i <= 3); // 3 ភាគដំបូងមើលឥតគិតថ្លៃ ឬ VIP Active
+                    episodesContainer.innerHTML += `
+                        <button onclick="playEpisode(${i}, ${isFree}, '${movie.title}')" class="w-full text-left p-3 rounded-lg bg-gray-900 hover:bg-gray-800 border border-gray-800 flex justify-between items-center transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded bg-gray-800 group-hover:bg-brand flex items-center justify-center font-bold text-xs transition">${i}</div>
+                                <div>
+                                    <p class="font-bold text-sm">${epLabel}</p>
+                                    <p class="text-xs text-gray-400">${isFree ? 'ឥតគិតថ្លៃ (Free)' : '🔒 10 កាក់'}</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 group-hover:text-white">▶ ទស្សនា</span>
+                        </button>
+                    `;
+                }
+
+                // ចាក់ភាគទី 1 ៝Default ពេលចូលមកដល់
+                playEpisode(1, isVipActive || true, movie.title);
+
+            } catch (error) {
+                console.error("Error loading movie details:", error);
+            }
+        }
+
+        // មុខងារសម្រាប់លេងភាគនីមួយៗ (អាចយក URL វីដេអូមកដាក់ជំនួសតាមតម្រូវការ)
+        window.playEpisode = function(epNumber, isFree, movieTitle) {
+            const linksList = parseMovieLinks(currentMovieData ? currentMovieData.driveUrl : '');
+            let linkItem = linksList[epNumber - 1];
+            let epLabel = linkItem && linkItem.label ? linkItem.label : `ភាគទី ${epNumber}`;
+            document.getElementById('currentEpTitle').innerText = `${epLabel} - ${movieTitle}`;
+            
+            const lockedOverlay = document.getElementById('lockedOverlay');
+            const epBadge = document.getElementById('epBadge');
+            const videoPlayer = document.getElementById('videoPlayer');
+
+            if (!isFree) {
+                // ឧទាហរណ៍ករណីជាប់សោរ (អាចភ្ជាប់ជាមួយប្រព័ន្ធពិនិត្យមើលថា User បានទិញហើយឬនៅ)
+                lockedOverlay.classList.remove('hide');
+                epBadge.innerText = "Premium Episode";
+                epBadge.className = "bg-yellow-900/50 text-yellow-400 border border-yellow-700/50 text-xs px-3 py-1 rounded-full font-bold";
+                videoPlayer.src = ""; // បិទវីដេអូសិន
+            } else {
+                lockedOverlay.classList.add('hide');
+                epBadge.innerText = "Free Episode";
+                epBadge.className = "bg-purple-900/50 text-brand border border-purple-700/50 text-xs px-3 py-1 rounded-full font-bold";
+                
+                let url = linkItem && linkItem.url ? linkItem.url : (linksList[0] ? linksList[0].url : "https://www.youtube.com/embed/dQw4w9WgXcQ");
+                if (url.includes('drive.google.com')) {
+                    if (url.includes('/view')) {
+                        url = url.replace('/view', '/preview');
+                    } else if (!url.includes('/preview')) {
+                        url = url.replace(/\/d\/(.*?)\/.*/, '/d/$1/preview');
+                    }
+                }
+                if(url.includes('watch?v=')) {
+                    url = url.replace('watch?v=', 'embed/');
+                } else if(url.includes('youtu.be/')) {
+                    url = url.replace('youtu.be/', 'youtube.com/embed/');
+                }
+                videoPlayer.src = url;
+            }
+        }
+
+        loadMovieDetails();
+
+        let currentLang = localStorage.getItem('ai_legend_lang') || 'km';
+
+        const watchTranslations = {
+            km: {
+                coinsLabel: "💰 កាក់របស់អ្នក:"
+            },
+            en: {
+                coinsLabel: "💰 Your Coins:"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'km' ? 'en' : 'km';
+            localStorage.setItem('ai_legend_lang', currentLang);
+            applyWatchTranslations();
+        }
+
+        function applyWatchTranslations() {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (watchTranslations[currentLang] && watchTranslations[currentLang][key]) {
+                    el.innerText = watchTranslations[currentLang][key];
+                }
+            });
+            const langLabel = document.getElementById('currentLangLabel');
+            if (langLabel) {
+                langLabel.innerText = currentLang === 'km' ? 'ខ្មែរ | ENG' : 'ENG | ខ្មែរ';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applyWatchTranslations();
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed: ', err));
+            });
+        }
+    </script>
+</body>
+    <!-- Anti-Screenshot & Anti-ScreenRecord Privacy Warning Modal -->
+    <div id="privacyWarningModal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[999] hide p-4">
+        <div class="bg-gradient-to-tr from-red-950 to-gray-900 border-2 border-red-500 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl space-y-4 animate-bounce">
+            <div class="w-16 h-16 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center text-3xl mx-auto text-red-400">🛡️</div>
+            <h3 class="text-xl font-extrabold text-red-400">កិច្ចការពារកម្មសិទ្ធិបញ្ញា</h3>
+            <p class="text-base font-bold text-white bg-red-950/50 p-3 rounded-xl border border-red-500/30">
+                សូមគោរពកម្មសិទ្ធឯកជន ហាមថតចម្លង
+            </p>
+            <p class="text-xs text-gray-400">ប្រព័ន្ធបានរកឃើញសកម្មភាពថតអេក្រង់ (Screenshot/Screenrecord) ឬការចម្លង ដែលត្រូវបានហាមឃាត់នៅលើប្រព័ន្ធ Window, macOS, iOS និង Android។</p>
+            <button onclick="document.getElementById('privacyWarningModal').classList.add('hide')" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl text-sm transition shadow-lg">
+                យល់ព្រម (OK)
+            </button>
+        </div>
+    </div>
+
+    <style>
+        /* Anti-Copy and Anti-Selection CSS */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+    </style>
+
+    <script>
+        function showPrivacyWarning() {
+            const modal = document.getElementById('privacyWarningModal');
+            if (modal) {
+                modal.classList.remove('hide');
+            }
+        }
+
+        // Disable right click context menu
+        document.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            showPrivacyWarning();
+            return false;
+        });
+
+        // Detect PrintScreen and Screenshot shortcuts across Windows, macOS, iOS, Android
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen') {
+                e.preventDefault();
+                try { navigator.clipboard.writeText(''); } catch(err) {}
+                showPrivacyWarning();
+                return false;
+            }
+
+            if (
+                ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 's' || e.key === 'S' || e.key === '3' || e.key === '4' || e.key === '5' || e.key === 'I' || e.key === 'i')) ||
+                ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))
+            ) {
+                e.preventDefault();
+                showPrivacyWarning();
+                return false;
+            }
+        });
+    </script>
+
+</html>
