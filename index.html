@@ -23,6 +23,20 @@
         .hide { display: none !important; } 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        #videoContainerWrapper.fullscreen-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            max-height: none !important;
+            z-index: 999999 !important;
+            border-radius: 0 !important;
+            background-color: #000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
     </style>
 </head>
 <body class="min-h-screen pb-20 md:pb-0">
@@ -439,8 +453,55 @@
             }
         }
 
+        window.enterFullScreen = function() {
+            const container = document.getElementById('videoContainerWrapper');
+            if (!container) return;
+            const isCssFullscreen = container.classList.contains('fullscreen-mode');
+            if (!document.fullscreenElement && !isCssFullscreen) {
+                let requestPromise = null;
+                if (container.requestFullscreen) {
+                    requestPromise = container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    requestPromise = container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    requestPromise = container.msRequestFullscreen();
+                }
+                if (!requestPromise) {
+                    container.classList.add('fullscreen-mode');
+                } else if (requestPromise instanceof Promise) {
+                    requestPromise.catch(() => {
+                        container.classList.add('fullscreen-mode');
+                    });
+                }
+            }
+        };
+
+        window.exitFullScreen = function() {
+            const container = document.getElementById('videoContainerWrapper');
+            if (!container) return;
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+            container.classList.remove('fullscreen-mode');
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             applyTranslations();
+            const mainVideo = document.getElementById('mainVideoPlayer');
+            if (mainVideo) {
+                mainVideo.addEventListener('play', () => {
+                    enterFullScreen();
+                });
+                mainVideo.addEventListener('pause', () => {
+                    exitFullScreen();
+                });
+            }
         });
 
         let selectedAmount = 2.50;
@@ -1229,6 +1290,7 @@
                 document.getElementById('userBalance').textContent = `💰 ${newBalance} pts`;
                 alert("🔓 ដោះសោរដោយជោគជ័យ!");
                 selectEpisode(activeEpisodeNum);
+                enterFullScreen();
             } catch (err) {
                 alert("កំហុសក្នុងការដោះសោរ: " + err.message);
             }
